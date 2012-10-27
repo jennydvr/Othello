@@ -4,8 +4,8 @@
 // Last Revision: 10/23/12
 // Modified by:
 
-#include "othello_cut.h" // won't work correctly until .h is fixed!
-#include <iostream>
+//#include "othello_cut.h" // won't work correctly until .h is fixed!
+#include "minmax.h"
 
 using namespace std;
 
