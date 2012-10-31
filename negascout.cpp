@@ -23,9 +23,10 @@ int negascout(state_t node, int depth, int alpha, int beta, bool color){
            else{
         	   continue;
            }
-           cout << "child " << endl << child;
-           cout << endl;
+//           cout << "child " << endl << child;
+//           cout << endl;
     	   int a = -negascout (child, depth-1, -b, -alpha, !color);
+  //  	   cout << "a, b, alpha " << a << " " << b <<" " <<alpha << endl;
    	       if (a>alpha) 
    	    	   alpha = a;
    	       if (alpha>=beta)
@@ -35,7 +36,8 @@ int negascout(state_t node, int depth, int alpha, int beta, bool color){
    	          if (alpha>=beta)
    	             return alpha; 
    	       }
-   	       b = alpha+1;        
+   	       b = alpha+1;   
+   	//       cout << "alpha " << alpha << endl;
 	    }
 	   return alpha;
 }
