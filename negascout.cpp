@@ -6,10 +6,13 @@
 //
 //
 #include "negascout.h"
+
 using namespace std;
 int negascout(state_t node, int depth, int alpha, int beta, bool color){
-	   if (node.terminal() || depth==0)
-	        return node.value();
+	   if (node.terminal() || depth==0){
+		   cout << node;
+		   return node.value();
+	   }
 	   
 	    int b = beta ;  // initial window (-beta,-alpha)
 	    for( int pos = 0; pos < DIM; ++pos ) {

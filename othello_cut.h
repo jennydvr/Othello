@@ -1,7 +1,7 @@
 // Game of Othello -- Cut from full code
 // Universidad Simon Bolivar, 2005.
 // Author: Blai Bonet
-// Last Revision: 10/23/12
+// Last Revision: 11/01/12
 // Modified by: 
 
 #include <cassert>
@@ -89,6 +89,7 @@ class state_t {
     unsigned char t() const { return t_; }
     unsigned free() const { return free_; }
     unsigned pos() const { return pos_; }
+    size_t hash() const { return free_ ^ pos_ ^ t_; }
 
     bool is_color(bool color, int pos) const {
         if( color )
@@ -124,6 +125,16 @@ class state_t {
     bool operator<(const state_t &s) const {
         return (free_ < s.free_) || ((free_ == s.free_) && (pos_ < s.pos_));
     }
+    bool operator==(const state_t &state) const {
+        return (state.t_ == t_) && (state.free_ == free_) && (state.pos_ == pos_);
+    }
+    const state_t& operator=(const state_t &state) {
+        t_ = state.t_;
+        free_ = state.free_;
+        pos_ = state.pos_;
+        return *this;
+    }
+
     void print(std::ostream &os, int depth = 0) const;
     void print_bits(std::ostream &os) const;
 };
@@ -198,6 +209,7 @@ inline bool state_t::outflank(bool color, int pos) const {
         for( p = x - 1; (p >= dia2[pos - 4]) && !is_free(*p) && (color ^ is_black(*p)); --p );
         if( (p < x - 1) && (p >= dia2[pos - 4]) && !is_free(*p) ) return true;
     }
+
 
     return false;
 }
