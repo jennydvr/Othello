@@ -6,7 +6,7 @@
 
 //#include "othello_cut.h" // won't work correctly until .h is fixed!
 //#include "minmax.h"
-#include "negascout.h"
+//#include "negascout.h"
 #include <fstream>
 using namespace std;
 

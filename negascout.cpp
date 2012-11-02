@@ -8,34 +8,55 @@
 
 #include "algorithms.h"
 
-int negascout(state_t node, int depth, int alpha, int beta, bool color){
-    if (node.terminal() || depth == 0) {
-	//	   cout << node;
-        return node.value();
-    }
-	   
-    int b = beta;  // initial window (-beta,-alpha)
+int negaMax(state_t state, int depth, int alpha, int beta, bool player) {
+    if (state.terminal() || depth == 0)
+        return state.value();
     
-    std::vector<state_t> children = node.getChildren(color);
+    std::vector<state_t> children = state.getChildren(player);
+    int m = MAX(INT_MIN, negaMin(children[0], depth - 1, alpha, beta, !player));
     
-    for (int i = 0; i != children.size(); ++i) {
-//           cout << "child " << endl << child;
-//           cout << endl;
+    if (m >= beta)
+        return m;
+    
+    for (int i = 1; i != children.size(); ++i) {
+        int score = negaMin(children[i], depth - 1, m, m + 1, !player);
         
-        int a = -negascout(children[i], depth-1, -b, -alpha, !color);
-  //  	   cout << "a, b, alpha " << a << " " << b <<" " <<alpha << endl;
-        if (a > alpha)
-            alpha = a;
-        if (alpha >= beta)
-            return alpha; //Beta pruning
-        if (alpha >= b) {
-            alpha = -negascout(children[i], depth-1, -beta, -alpha, !color);
-            if (alpha >= beta)
-                return alpha;
-        }
-        b = alpha + 1;
-   	//       cout << "alpha " << alpha << endl;
+        if (score > m)
+            m = (score >= beta) ? score : negaMin(children[i], depth - 1, score, beta, !player);
+        
+        if (m >= beta)
+            return m;
     }
     
-    return alpha;
+    return m;
+}
+
+int negaMin(state_t state, int depth, int alpha, int beta, bool player) {
+    if (state.terminal() || depth == 0)
+        return state.value();
+	
+    std::vector<state_t> children = state.getChildren(player);
+    int m = MIN(INT_MAX, negaMax(children[0], depth - 1, alpha, beta, !player));
+    
+    if (m <= alpha)
+        return m;
+    
+    for (int i = 1; i != children.size(); ++i) {
+        int score = negaMax(children[i], depth - 1, m, m + 1, !player);
+        
+        if (score <= m)
+            m = (score <= alpha) ? score : negaMax(children[i], depth - 1, alpha, score, !player);
+        
+        if (m <= alpha)
+            return m;
+    }
+    
+    return m;
+}
+
+int negascout(state_t state, int depth, bool player) {
+    if (player == MAXPLAYER)
+        return negaMax(state, depth, INT_MIN, INT_MAX, player);
+    else
+        return negaMin(state, depth, INT_MIN, INT_MAX, player);
 }

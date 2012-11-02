@@ -8,17 +8,15 @@
 
 #include "algorithms.h"
 
-bool MAXPLAYER = true;
-
-int alphabeta(state_t state, int d, int alpha, int beta, bool color){
-	if (d == 0 || state.terminal())
+int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
+	if (depth == 0 || state.terminal())
 		return state.value();
 	
-    std::vector<state_t> children = state.getChildren(color);
+    std::vector<state_t> children = state.getChildren(player);
     
-	if (color == MAXPLAYER) {
+	if (player == MAXPLAYER) {
         for (int i = 0; i != children.size(); ++i) {
-            alpha = MAX(alpha, alphabeta(children[i], d-1, alpha, beta, !color));
+            alpha = MAX(alpha, alphabeta(children[i], depth-1, alpha, beta, !player));
             
             if (beta <= alpha)
                 break;
@@ -28,7 +26,7 @@ int alphabeta(state_t state, int d, int alpha, int beta, bool color){
         
 	} else {
         for (int i = 0; i != children.size(); ++i) {
-            beta = MIN(beta, alphabeta(children[i], d-1, alpha, beta, !color));
+            beta = MIN(beta, alphabeta(children[i], depth-1, alpha, beta, !player));
             
             if (beta <= alpha)
                 break;
@@ -36,5 +34,8 @@ int alphabeta(state_t state, int d, int alpha, int beta, bool color){
         
         return beta;
 	}
-}	
-	
+}
+
+int alphabeta(state_t state, int depth, bool player) {
+    return alphabeta(state, depth, -100000, 100000, player);
+}

@@ -10,22 +10,30 @@
 
 using namespace std;
 
+vector<state_t> states;
+
+void test() {
+    int depth = 1;
+    bool player = false;
+    
+    while (!states.empty()) {
+        cout << "\n pos = " << states.size() - 1;
+        cout << "    a = " << alphabeta(states.back(), depth, player) << " ";
+        cout << "    n = " << negascout(states.back(), depth, player) << " ";
+        cout << "    m = " << minimax(states.back(), depth, player) << endl;
+        
+        ++depth;
+        states.pop_back();
+        player = !player;
+    }
+}
+
 int main(int argc, const char **argv) {
     state_t state;
     
     cout << "Principal variation:" << endl;
     for( int i = 0; PV[i] != -1; ++i ) {
         bool player = i % 2 == 0; // black moves first!
-        
-        // PRUEBA
-        MAXPLAYER = player;
-        
-        cout << minimax(state, 4, player) << " ";
-        cout << alphabeta(state, 4, -10000, 10000, player) << " ";
-        cout << negascout(state, 4, -10000, 10000, player) << endl;
-        int x;
-        cin >> x;
-        // ENDL
         
         int pos = PV[i];
         cout << state;
@@ -34,10 +42,13 @@ int main(int argc, const char **argv) {
         << endl;
         state = state.move(player, pos);
         cout << "Board after " << i+1 << (i == 0 ? " ply:" : " plies:") << endl;
+        states.push_back(state);
     }
     cout << state;
     cout << "Value of the game = " << state.value() << endl;
     cout << "#bits per state = " << sizeof(state) * 8 << endl;
+    
+    test();
     
     if( argc > 1 ) {
         int n = atoi(argv[1]);
