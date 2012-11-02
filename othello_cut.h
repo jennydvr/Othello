@@ -121,7 +121,22 @@ class state_t {
         }
         return valid_moves.empty() ? -1 : valid_moves[lrand48() % valid_moves.size()];
     }
-
+    std::vector<state_t> getChildren(bool color) {
+        std::vector<state_t> children;
+        
+        // Calculate all possible plies
+        for (int pos = 0; pos < DIM; ++pos)
+            if (color && is_black_move(pos))
+                children.push_back(black_move(pos));
+            else if (!color && is_white_move(pos))
+                children.push_back(white_move(pos));
+        
+        // If there are none, pass
+        if (children.empty())
+            children.push_back(state_t(*this));
+        
+        return children;
+    }
     bool operator<(const state_t &s) const {
         return (free_ < s.free_) || ((free_ == s.free_) && (pos_ < s.pos_));
     }

@@ -5,15 +5,28 @@
 // Modified by:
 
 //#include "othello_cut.h" // won't work correctly until .h is fixed!
-#include "minmax.h"
+//#include "minmax.h"
+#include "algorithms.h"
 
 using namespace std;
 
 int main(int argc, const char **argv) {
     state_t state;
+    
     cout << "Principal variation:" << endl;
     for( int i = 0; PV[i] != -1; ++i ) {
         bool player = i % 2 == 0; // black moves first!
+        
+        // PRUEBA
+        MAXPLAYER = player;
+        
+        cout << minimax(state, 4, player) << " ";
+        cout << alphabeta(state, 4, -10000, 10000, player) << " ";
+        cout << negascout(state, 4, -10000, 10000, player) << endl;
+        int x;
+        cin >> x;
+        // ENDL
+        
         int pos = PV[i];
         cout << state;
         cout << (player ? "Black" : "White")

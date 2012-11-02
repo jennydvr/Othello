@@ -14,7 +14,7 @@ using namespace std;
  * incluyendo -1
  */
 
-int main(int argc, const char **argv) {
+int mains(int argc, const char **argv) {
     state_t state;
 //    cout << "Principal variation:" << endl;
    if( argc > 1 ) {
