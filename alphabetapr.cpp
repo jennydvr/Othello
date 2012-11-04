@@ -8,9 +8,18 @@
 
 #include "algorithms.h"
 
+hash_table_t alphabeta_table;
+
 int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
-	if (depth == 0 || state.terminal())
+    hash_table_t::iterator it = alphabeta_table.find(state);
+    
+    if (it != alphabeta_table.end())
+        return (it->second).val;
+    
+	if (depth == 0 || state.terminal()) {
+        alphabeta_table.insert(make_pair(state, stored_info_t(state.value())));
 		return state.value();
+    }
 	
     std::vector<state_t> children = state.getChildren(player);
     
@@ -22,6 +31,7 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
                 break;
         }
         
+        alphabeta_table.insert(make_pair(state, stored_info_t(alpha)));
         return alpha;
         
 	} else {
@@ -32,10 +42,11 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
                 break;
         }
         
+        alphabeta_table.insert(make_pair(state, stored_info_t(beta)));
         return beta;
 	}
 }
 
 int alphabeta(state_t state, int depth, bool player) {
-    return alphabeta(state, depth, -100000, 100000, player);
+    return alphabeta(state, depth, INT_MIN, INT_MAX, player);
 }

@@ -13,12 +13,26 @@
 
 #include <climits>
 #include "othello_cut.h"
+#include <tr1/unordered_map>
 
-int negaMax(state_t state, int depth, int alpha, int beta, bool player);
-int negaMin(state_t state, int depth, int alpha, int beta, bool player);
+using namespace std;
 
-int maxValue(state_t state, int depth, bool player);
-int minValue(state_t state, int depth, bool player);
+struct stored_info_t {
+    int val;
+    bool player;
+    
+    stored_info_t() { };
+    stored_info_t(int v, bool p = true) : val(v), player(p) { }
+};
+
+struct hash_function_t : public tr1::hash<state_t> {
+    size_t operator()(const state_t &state) const {
+        return state.hash();
+    }
+};
+
+class hash_table_t : public tr1::unordered_map<state_t, stored_info_t, hash_function_t> {
+};
 
 // Minimax (Negamax) algorithm
 int minimax(state_t state, int depth, bool player);

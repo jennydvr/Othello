@@ -8,11 +8,20 @@
 
 #include "algorithms.h"
 
-int factor = -1;
+hash_table_t minimax_table;
+
+int minValue(state_t state, int depth, bool player);
 
 int maxValue(state_t state, int depth, bool player) {
-    if (depth == 0 || state.terminal())
+    hash_table_t::iterator it = minimax_table.find(state);
+    
+    if (it != minimax_table.end())
+        return (it->second).val;
+    
+    if (depth == 0 || state.terminal()) {
+        minimax_table.insert(make_pair(state, stored_info_t(state.value())));
         return state.value();
+    }
     
     int alpha = INT_MIN;
     std::vector<state_t> children = state.getChildren(player);
@@ -20,12 +29,20 @@ int maxValue(state_t state, int depth, bool player) {
     for (int i = 0; i != children.size(); ++i)
         alpha = MAX(alpha, minValue(children[i], depth - 1, !player));
     
+    minimax_table.insert(make_pair(state, stored_info_t(alpha)));
     return alpha;
 }
 
 int minValue(state_t state, int depth, bool player) {
-    if (depth == 0 || state.terminal())
+    hash_table_t::iterator it = minimax_table.find(state);
+    
+    if (it != minimax_table.end())
+        return (it->second).val;
+    
+    if (depth == 0 || state.terminal()) {
+        minimax_table.insert(make_pair(state, stored_info_t(state.value())));
         return state.value();
+    }
     
     int alpha = INT_MAX;
     std::vector<state_t> children = state.getChildren(player);
@@ -33,23 +50,11 @@ int minValue(state_t state, int depth, bool player) {
     for (int i = 0; i != children.size(); ++i)
         alpha = MIN(alpha, maxValue(children[i], depth - 1, !player));
     
+    minimax_table.insert(make_pair(state, stored_info_t(alpha)));
     return alpha;
 }
 
-int negamax(state_t state, int depth, bool player) {
-    if (depth == 0 || state.terminal())
-        return state.value();
-    
-    int alpha = INT_MIN;
-    std::vector<state_t> children = state.getChildren(player);
-    
-    for (int i = 0; i != children.size(); ++i)
-        alpha = MAX(alpha, -negamax(children[i], depth - 1, !player));
-    
-    return alpha;
-}
-
-int minimax(state_t state, int depth, bool player) {
+int minimax(state_t state, int depth, bool player) {    
     if (player == MAXPLAYER)
         return maxValue(state, depth, player);
     else

@@ -17,10 +17,10 @@ void test() {
     bool player = false;
     
     while (!states.empty()) {
-        cout << "\n pos = " << states.size() - 1;
-        cout << "    a = " << alphabeta(states.back(), depth, player) << " ";
-        cout << "    n = " << negascout(states.back(), depth, player) << " ";
-        cout << "    m = " << minimax(states.back(), depth, player) << endl;
+        cout << "pos = " << states.size() - 1;
+        cout << "    a = " << alphabeta(states.back(), depth, player) << " \n";
+       // cout << "    n = " << negascout(states.back(), depth, player) << " \n";
+       // cout << "    m = " << minimax(states.back(), depth, player) << endl;
         
         ++depth;
         states.pop_back();
