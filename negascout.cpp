@@ -46,24 +46,35 @@ int negaMax(state_t state, int depth, int alpha, int beta, bool player) {
     int m = MAX(INT_MIN, negaMin(children[0], depth - 1, alpha, beta, !player));
     
     if (m >= beta) {
-        negascout_table.insert(make_pair(state, stored_info_t(m,depth,2)));
+	//has the best value
+      negascout_table.insert(make_pair(state, stored_info_t(m,depth)));
         return m;
     }
     
     for (int i = 1; i != children.size(); ++i) {
         int score = negaMin(children[i], depth - 1, m, m + 1, !player);
         
-        if (score > m)
-            m = (score >= beta) ? score : negaMin(children[i], depth - 1, score, beta, !player);
+        if (score > m){
+	  // min is greater than current value, so its a lower bound
+	  negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));        
+	    if(score >= beta){
+		m = score;
+		
+	    }
+	    else
+		negaMin(children[i], depth - 1, score, beta, !player);
+	}
         
         if (m >= beta) {
-           negascout_table.insert(make_pair(state, stored_info_t(m,depth,2)));
+	// Has the best value
+           negascout_table.insert(make_pair(state, stored_info_t(m,depth)));
             return m;
         }
- 	negascout_table.insert(make_pair(state, stored_info_t(m,depth,2)));
+
+ 	negascout_table.insert(make_pair(state, stored_info_t(score,depth,0)));
     }
     
-    negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));
+  negascout_table.insert(make_pair(state, stored_info_t(m,depth,2)));
     return m;
 }
 
@@ -104,24 +115,29 @@ int negaMin(state_t state, int depth, int alpha, int beta, bool player) {
     int m = MIN(INT_MAX, negaMax(children[0], depth - 1, alpha, beta, !player));
     
     if (m <= alpha) {
-        negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));
+       negascout_table.insert(make_pair(state, stored_info_t(m,depth)));
         return m;
     }
     
     for (int i = 1; i != children.size(); ++i) {
         int score = negaMax(children[i], depth - 1, m, m + 1, !player);
         
-        if (score <= m)
-            m = (score <= alpha) ? score : negaMax(children[i], depth - 1, alpha, score, !player);
-        
+        if (score <= m){
+            if(score <= alpha){
+		m = score;
+	//	negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));
+		}
+		else
+		negaMax(children[i], depth - 1, alpha, score, !player);
+        }
         if (m <= alpha) {
-            negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));
+          negascout_table.insert(make_pair(state, stored_info_t(m,depth)));
             return m;
         }
-	 negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));
+	negascout_table.insert(make_pair(state, stored_info_t(score,depth,0)));
     }
     
-    negascout_table.insert(make_pair(state, stored_info_t(m,depth,2)));
+  negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));
     return m;
 }
 
