@@ -6,7 +6,7 @@
 
 
 #include "algorithms.h"
-
+#include <fstream>
 using namespace std;
 
 vector<state_t> states;
@@ -17,9 +17,12 @@ void test() {
     
     while (!states.empty()) {
         cout << "pos = " << states.size() - 1;
+ clock_t tStart = clock();    
         cout << "    a = " << alphabeta(states.back(), depth, player) << " \n";
-      //  cout << "    n = " << negascout(states.back(), depth, player) << " \n";
+      //   cout << "    n = " << negascout(states.back(), depth, player) << " \n";
       //  cout << "    m = " << minimax(states.back(), depth, player) << endl;
+  double tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
+    printf("%.5lf \n", tEnd);
         
         ++depth;
         states.pop_back();
