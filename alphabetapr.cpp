@@ -13,7 +13,7 @@ hash_table_t alphabeta_table;
 int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
     hash_table_t::iterator it = alphabeta_table.find(state);
     int value, type, d;
-    if (it != alphabeta_table.end()){
+   if (it != alphabeta_table.end()){
 	value = (it->second).val;
 	type = (it->second).type;
         d = (it->second).depth;
@@ -22,13 +22,14 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
 	  if (type == 1)
 		return value;
 	else if (type == 0)
-	  alpha = value;
+	  alpha = MAX(value,alpha);
 	else if (type == 2)
-		beta = value;		
+		beta = MIN(beta,value);		
 	if (alpha >= beta)
 		return value;     	
 	}
     }
+
     if (depth == 0 || state.terminal()) {
 	if (state.value() <= alpha)
 		type = 0;
@@ -37,6 +38,7 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
 	else 
 		type = 1;
 	alphabeta_table.insert(make_pair(state, stored_info_t(state.value(),depth,type)));
+
 	return state.value();
 	}
 	
