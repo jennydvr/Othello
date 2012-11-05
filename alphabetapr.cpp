@@ -48,12 +48,13 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
         for (int i = 0; i != children.size(); ++i) {
             alpha = MAX(alpha, alphabeta(children[i], depth-1, alpha, beta, !player));
             
-            if (beta <= alpha) //  beta <= valor uppper bound
+            if (beta <= alpha) //  beta <= value, uppper bound
                 break;
+	 // if here, then beta > alpha, so alpha lower bound
 	  alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth,0)));
         }
-        
-        alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth,2)));
+        //here, alpha has the best value so it's an exact value
+        alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth)));
         return alpha;
         
 	} else {
@@ -64,8 +65,8 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
                 break;
 	alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth,0)));
         }
-        
-        alphabeta_table.insert(make_pair(state, stored_info_t(beta,depth,2)));
+        //here, beta has the best value so it's an exact value
+        alphabeta_table.insert(make_pair(state, stored_info_t(beta,depth)));
         return beta;
 	}
    
