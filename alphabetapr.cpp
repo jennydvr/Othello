@@ -26,7 +26,7 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
 	else if (type == 2)
 		beta = MIN(beta,value);		
 	if (alpha >= beta)
-		return value;     	
+		return alpha;     	
 	}
     }
 
