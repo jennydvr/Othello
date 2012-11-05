@@ -19,10 +19,12 @@ using namespace std;
 
 struct stored_info_t {
     int val;
+    int depth;
+    int type; // 0 lower, 1 exact, 2 upper
     bool player;
     
     stored_info_t() { };
-    stored_info_t(int v, bool p = true) : val(v), player(p) { }
+    stored_info_t(int v, int d = 0, int t = 1, bool p = true) : val(v), depth(d), type(t), player(p) { }
 };
 
 struct hash_function_t : public tr1::hash<state_t> {

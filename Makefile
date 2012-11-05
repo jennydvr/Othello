@@ -1,4 +1,4 @@
-CXX = g++-mp-4.6
+CXX = g++ 
 CXXFLAGS = -std=gnu++0x -Os
 
 build-exec = $(CXX) $(CXXFLAGS) -o $@ $^

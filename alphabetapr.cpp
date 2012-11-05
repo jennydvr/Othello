@@ -12,14 +12,32 @@ hash_table_t alphabeta_table;
 
 int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
     hash_table_t::iterator it = alphabeta_table.find(state);
-    
-    if (it != alphabeta_table.end())
-        return (it->second).val;
-    
-	if (depth == 0 || state.terminal()) {
-        alphabeta_table.insert(make_pair(state, stored_info_t(state.value())));
-		return state.value();
+    int value, type, d;
+    if (it != alphabeta_table.end()){
+	value = (it->second).val;
+	type = (it->second).type;
+        d = (it->second).depth;
+
+	if (d >= depth){
+	  if (type == 1)
+		return value;
+	else if (type == 0)
+	  alpha = value;
+	else if (type == 2)
+		beta = value;		
+	if (alpha >= beta)
+		return value;     	
+	}
     }
+    if (depth == 0 || state.terminal()) {
+	if (state.value() <= alpha)
+		type = 0;
+	else if (state.value() >= beta)
+		type = 2;
+	//cout << state.value() << " and type " << type << endl;
+	alphabeta_table.insert(make_pair(state, stored_info_t(state.value(),depth)));
+	return state.value();
+	}
 	
     std::vector<state_t> children = state.getChildren(player);
     
@@ -27,11 +45,12 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
         for (int i = 0; i != children.size(); ++i) {
             alpha = MAX(alpha, alphabeta(children[i], depth-1, alpha, beta, !player));
             
-            if (beta <= alpha)
+            if (beta <= alpha) //  beta <= valor uppper bound
                 break;
+	  alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth,0)));
         }
         
-        alphabeta_table.insert(make_pair(state, stored_info_t(alpha)));
+        alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth,2)));
         return alpha;
         
 	} else {
@@ -40,11 +59,13 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
             
             if (beta <= alpha)
                 break;
+	alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth,0)));
         }
         
-        alphabeta_table.insert(make_pair(state, stored_info_t(beta)));
+        alphabeta_table.insert(make_pair(state, stored_info_t(beta,depth,2)));
         return beta;
 	}
+   
 }
 
 int alphabeta(state_t state, int depth, bool player) {

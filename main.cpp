@@ -4,8 +4,7 @@
 // Last Revision: 10/23/12
 // Modified by:
 
-//#include "othello_cut.h" // won't work correctly until .h is fixed!
-//#include "minmax.h"
+
 #include "algorithms.h"
 
 using namespace std;
@@ -19,8 +18,8 @@ void test() {
     while (!states.empty()) {
         cout << "pos = " << states.size() - 1;
         cout << "    a = " << alphabeta(states.back(), depth, player) << " \n";
-       // cout << "    n = " << negascout(states.back(), depth, player) << " \n";
-       // cout << "    m = " << minimax(states.back(), depth, player) << endl;
+      //  cout << "    n = " << negascout(states.back(), depth, player) << " \n";
+      //  cout << "    m = " << minimax(states.back(), depth, player) << endl;
         
         ++depth;
         states.pop_back();
@@ -36,7 +35,7 @@ int main(int argc, const char **argv) {
         bool player = i % 2 == 0; // black moves first!
         
         int pos = PV[i];
-        cout << state;
+     //   cout << state;
         cout << (player ? "Black" : "White")
         << " moves at pos = " << pos << (pos == 36 ? " (pass)" : "")
         << endl;
