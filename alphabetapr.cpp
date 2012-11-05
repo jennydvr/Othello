@@ -34,8 +34,9 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
 		type = 0;
 	else if (state.value() >= beta)
 		type = 2;
-	//cout << state.value() << " and type " << type << endl;
-	alphabeta_table.insert(make_pair(state, stored_info_t(state.value(),depth)));
+	else 
+		type = 1;
+	alphabeta_table.insert(make_pair(state, stored_info_t(state.value(),depth,type)));
 	return state.value();
 	}
 	
