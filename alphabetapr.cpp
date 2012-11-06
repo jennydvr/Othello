@@ -9,8 +9,10 @@
 #include "algorithms.h"
 
 hash_table_t alphabeta_table;
+int alphabeta_expanded;
 
 int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
+    ++alphabeta_expanded;
     
     // Check table
     hash_table_t::iterator it = alphabeta_table.find(state);
@@ -68,5 +70,6 @@ int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
 }
 
 int alphabeta(state_t state, int depth, bool player) {
+    alphabeta_expanded = 0;
     return alphabeta(state, depth, INT_MIN, INT_MAX, player);
 }

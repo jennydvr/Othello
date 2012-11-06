@@ -9,10 +9,13 @@
 #include "algorithms.h"
 
 hash_table_t minimax_table;
+int minimax_expanded;
 
 int minValue(state_t state, int depth, bool player);
 
 int maxValue(state_t state, int depth, bool player) {
+    ++minimax_expanded;
+    
     hash_table_t::iterator it = minimax_table.find(state);
     
     if (it != minimax_table.end())
@@ -34,6 +37,8 @@ int maxValue(state_t state, int depth, bool player) {
 }
 
 int minValue(state_t state, int depth, bool player) {
+    ++minimax_expanded;
+    
     hash_table_t::iterator it = minimax_table.find(state);
     
     if (it != minimax_table.end())
@@ -54,7 +59,8 @@ int minValue(state_t state, int depth, bool player) {
     return alpha;
 }
 
-int minimax(state_t state, int depth, bool player) {    
+int minimax(state_t state, int depth, bool player) {
+    minimax_expanded = 0;
     if (player == MAXPLAYER)
         return maxValue(state, depth, player);
     else

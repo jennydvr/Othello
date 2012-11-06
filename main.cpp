@@ -21,11 +21,12 @@ void test(int alg) {
     double tEnd;
     
     cout << "FORMAT" << endl;
-    cout << "    <algorithm> = <value>  -  <hash.size>  -  <hash.bucket_cout>  -  <time>\n\n";
+    cout << "    <algorithm> = <value>  -  <hash.size>  -  <expanded nodes>  -  <time>\n\n";
     
     
     while (!states.empty()) {
-        cout << "ply = " << states.size() - 1 << endl;
+        //cout << "ply = " << states.size() - 1 << endl;
+        cout << states.size() - 1 << " ";
         
         if (alg == 0)
         {
@@ -34,9 +35,18 @@ void test(int alg) {
             ans = alphabeta(states.back(), depth, player);
             tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
             
+            /*
             cout << "    a = " << ans << "  -  ";
-            cout << alphabeta_table.size() << "  -  " << alphabeta_table.bucket_count() << "  -  ";
+            cout << alphabeta_table.size() << "  -  ";
+            cout << alphabeta_expanded << "  -  ";
             printf("%.5lf\n", tEnd);
+            */
+            
+            cout << ans << " ";
+            cout << alphabeta_table.size() << " ";
+            cout << alphabeta_expanded << " ";
+            printf("%.5lf\n", tEnd);
+            
         }
         else if (alg == 1) // Calculate negascout
         {        
@@ -44,9 +54,17 @@ void test(int alg) {
             ans = negascout(states.back(), depth, player);
             tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
             
+            /*
             cout << "    n = " << ans << "  -  ";
-            cout << negascout_table.size() << "  -  " << negascout_table.bucket_count() << "  -  ";
+            cout << negascout_table.size() << "  -  ";
+            cout << negascout_expanded << "  -  ";
             printf("%.5lf\n", tEnd);
+             */
+            cout << ans << " ";
+            cout << negascout_table.size() << " ";
+            cout << negascout_expanded << " ";
+            printf("%.5lf\n", tEnd);
+            
         }
         else if (alg == 2) // Calculate minimax
         {
@@ -54,8 +72,15 @@ void test(int alg) {
             ans = minimax(states.back(), depth, player);
             tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
             
+            /*
             cout << "    m = " << ans << "  -  ";
-            cout << minimax_table.size() << "  -  " << minimax_table.bucket_count() << "  -  ";
+            cout << minimax_table.size() << "  -  ";
+            cout << minimax_expanded << "  -  ";
+            printf("%.5lf\n", tEnd);
+             */
+            cout << ans << " ";
+            cout << minimax_table.size() << " ";
+            cout << minimax_expanded << " ";
             printf("%.5lf\n", tEnd);
         }
 

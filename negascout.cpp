@@ -9,10 +9,12 @@
 #include "algorithms.h"
 
 hash_table_t negascout_table;
+int negascout_expanded;
 
 int negaMin(state_t state, int depth, int alpha, int beta, bool player);
 
 int negaMax(state_t state, int depth, int alpha, int beta, bool player) {
+    ++negascout_expanded;
     
     // Check table
     hash_table_t::iterator it = negascout_table.find(state);
@@ -62,6 +64,7 @@ int negaMax(state_t state, int depth, int alpha, int beta, bool player) {
 }
 
 int negaMin(state_t state, int depth, int alpha, int beta, bool player) {
+    ++negascout_expanded;
     
     // Check table
     hash_table_t::iterator it = negascout_table.find(state);
@@ -111,6 +114,8 @@ int negaMin(state_t state, int depth, int alpha, int beta, bool player) {
 }
 
 int negascout(state_t state, int depth, bool player) {
+    negascout_expanded = 0;
+    
     if (player == MAXPLAYER)
         return negaMax(state, depth, INT_MIN, INT_MAX, player);
     else

@@ -40,6 +40,11 @@ extern hash_table_t alphabeta_table;
 extern hash_table_t negascout_table;
 extern hash_table_t minimax_table;
 
+// Expanded nodes
+extern int alphabeta_expanded;
+extern int negascout_expanded;
+extern int minimax_expanded;
+
 // Minimax (Negamax) algorithm
 int minimax(state_t state, int depth, bool player);
 
