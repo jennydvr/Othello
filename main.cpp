@@ -12,7 +12,7 @@ using namespace std;
 
 vector<state_t> states;
 
-void test() {
+void test(int alg) {
     int depth = 1;
     bool player = false;
     
@@ -27,35 +27,42 @@ void test() {
     while (!states.empty()) {
         cout << "ply = " << states.size() - 1 << endl;
         
-        // Calculate alphabeta
-        tStart = clock();
-        ans = alphabeta(states.back(), depth, player);
-        tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
-        
-        cout << "    a = " << ans << "  -  ";
-        cout << alphabeta_table.size() << "  -  " << alphabeta_table.bucket_count() << "  -  ";
-        printf("%.5lf\n", tEnd);
-        
+        if (alg == 0)
+        {
+            // Calculate alphabeta
+            tStart = clock();
+            ans = alphabeta(states.back(), depth, player);
+            tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
+            
+            cout << "    a = " << ans << "  -  ";
+            cout << alphabeta_table.size() << "  -  " << alphabeta_table.bucket_count() << "  -  ";
+            printf("%.5lf\n", tEnd);
+        }
+
         // Calculate negascout
-        
-        tStart = clock();
-        ans = negascout(states.back(), depth, player);
-        tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
-        
-        cout << "    n = " << ans << "  -  ";
-        cout << negascout_table.size() << "  -  " << negascout_table.bucket_count() << "  -  ";
-        printf("%.5lf\n", tEnd);
-        
+        if (alg == 1)
+        {        
+            tStart = clock();
+            ans = negascout(states.back(), depth, player);
+            tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
+            
+            cout << "    n = " << ans << "  -  ";
+            cout << negascout_table.size() << "  -  " << negascout_table.bucket_count() << "  -  ";
+            printf("%.5lf\n", tEnd);
+        }
         
         // Calculate minimax
-        tStart = clock();
-        ans = minimax(states.back(), depth, player);
-        tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
-        
-        cout << "    m = " << ans << "  -  ";
-        cout << minimax_table.size() << "  -  " << minimax_table.bucket_count() << "  -  ";
-        printf("%.5lf\n", tEnd);
-        
+        if (alg == 2)
+        {
+            tStart = clock();
+            ans = minimax(states.back(), depth, player);
+            tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
+            
+            cout << "    m = " << ans << "  -  ";
+            cout << minimax_table.size() << "  -  " << minimax_table.bucket_count() << "  -  ";
+            printf("%.5lf\n", tEnd);
+        }
+
         ++depth;
         states.pop_back();
         player = !player;
@@ -89,9 +96,35 @@ int main(int argc, const char **argv) {
     cout << "#bits per state = " << sizeof(state) * 8 << endl;
     */
     
-    test();
+    int algoritmo = -1;
+    if( argc > 1 )
+    {
+        algoritmo = atoi(argv[1]);
+        //0: Alpha-Beta | 1: NegaScout | 2: MinMax 
+        /*if (algoritmo != 0 && algoritmo != 1 && algoritmo != 2)
+            return 0;*/
+        if (algoritmo == 0)
+            cout << "[Se esta usando el algoritmo Alpha-Beta Pruning]" << endl;
+        else if (algoritmo == 1)
+            cout << "[Se esta usando el algoritmo NegaScout]" << endl;
+        else if (algoritmo == 2)
+            cout << "[Se esta usando el algoritmo MinMax]" << endl;
+        else
+        {
+            cout << "0: Alpha-Beta | 1: NegaScout | 2: MinMax" << endl;
+            return -1;
+        }
+        cout << endl;
+    }
+    else
+    {
+        cout << "Faltan argumentos!" << endl;
+        return 0;
+    }
+
+    test(algoritmo);
     
-    if( argc > 1 ) {
+    /*if( argc > 1 ) {
         int n = atoi(argv[1]);
         cout << endl << "Apply " << n << " random movements at empty board:";
         state = state_t();
@@ -102,7 +135,7 @@ int main(int argc, const char **argv) {
             cout << " " << pos;
         }
         cout << endl << state;
-    }
+    }*/
     
     return 0;
 }
