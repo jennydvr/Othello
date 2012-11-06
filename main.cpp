@@ -16,21 +16,28 @@ void test() {
     int depth = 1;
     bool player = false;
     
+    clock_t tStart;
+    int ans;
+    double tEnd;
+    
+    cout << "FORMAT" << endl;
+    cout << "    <algorithm> = <value>  -  <hash.size>  -  <hash.bucket_cout>  -  <time>\n\n";
+    
+    
     while (!states.empty()) {
         cout << "ply = " << states.size() - 1 << endl;
         
         // Calculate alphabeta
-        clock_t tStart = clock();
-        int ans = alphabeta(states.back(), depth, player);
-        double tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
+        tStart = clock();
+        ans = alphabeta(states.back(), depth, player);
+        tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
         
         cout << "    a = " << ans << "  -  ";
-      //  cout << alphabeta_table.size() << "  -  " << alphabeta_table.bucket_count() << "  -  ";
+        cout << alphabeta_table.size() << "  -  " << alphabeta_table.bucket_count() << "  -  ";
         printf("%.5lf\n", tEnd);
         
-        
         // Calculate negascout
-        /*
+        
         tStart = clock();
         ans = negascout(states.back(), depth, player);
         tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
@@ -38,7 +45,7 @@ void test() {
         cout << "    n = " << ans << "  -  ";
         cout << negascout_table.size() << "  -  " << negascout_table.bucket_count() << "  -  ";
         printf("%.5lf\n", tEnd);
-        */
+        
         
         // Calculate minimax
         tStart = clock();
@@ -46,9 +53,8 @@ void test() {
         tEnd = (clock() - tStart)/(double)CLOCKS_PER_SEC;
         
         cout << "    m = " << ans << "  -  ";
-      //  cout << minimax_table.size() << "  -  " << minimax_table.bucket_count() << "  -  ";
+        cout << minimax_table.size() << "  -  " << minimax_table.bucket_count() << "  -  ";
         printf("%.5lf\n", tEnd);
-        
         
         ++depth;
         states.pop_back();

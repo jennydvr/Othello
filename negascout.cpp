@@ -13,130 +13,101 @@ hash_table_t negascout_table;
 int negaMin(state_t state, int depth, int alpha, int beta, bool player);
 
 int negaMax(state_t state, int depth, int alpha, int beta, bool player) {
+    
+    // Check table
     hash_table_t::iterator it = negascout_table.find(state);
-    int value, d, type;
-    
-    if (it != negascout_table.end()) {
-        value = (it->second).val; 
-        d = (it->second).depth;
-        type = (it->second).type;
-        if (d >= depth) {
-            if (type == 1)
-                return value;
-            else if (type == 0)  // Reducing windows
-                alpha = MAX(alpha,value);
-            else if(type == 2)
-                beta = MIN(beta,value);
-            if (alpha >= beta) // Null window
-                return alpha;	
-        }
+    if (it != negascout_table.end() && (it->second).depth >= depth) {
+        int value = (it->second).val;
+        int type = (it->second).type;
+        
+        if (type == 1)
+            return value;
+        else if (type == 0)
+            alpha = MAX(value,alpha);
+        else if (type == 2)
+            beta = MIN(beta,value);
+        if (alpha >= beta)
+            return value;
     }
     
-    if (state.terminal() || depth == 0) {
-        if (state.value() <= alpha)
-            type = 0;
-        else if (state.value() >= beta)
-            type = 2;
-        else
-            type = 1;
-        negascout_table.insert(make_pair(state, stored_info_t(state.value(),depth,type)));
+    // Execute algorithm
+    if (state.terminal() || depth == 0)
         return state.value();
-    }
     
     std::vector<state_t> children = state.getChildren(player);
-    int m = MAX(INT_MIN, negaMin(children[0], depth - 1, alpha, beta, !player));
+    int score = MAX(INT_MIN, negaMin(children[0], depth - 1, alpha, beta, !player));
     
-    if (m >= beta) {
-        //has the best value
-        negascout_table.insert(make_pair(state, stored_info_t(m,depth)));
-        return m;
-    }
-    
-    for (int i = 1; i != children.size(); ++i) {
-        int score = negaMin(children[i], depth - 1, m, m + 1, !player);
+    if (score < beta)
+        for (int i = 1; i != children.size(); ++i) {
+            int value = negaMin(children[i], depth - 1, score, score + 1, !player);
         
-        if (score > m) {
-            // min is greater than current value, so its a lower bound
-            negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));        
-            if (score >= beta) {
-                m = score;
-            } else
-                negaMin(children[i], depth - 1, score, beta, !player);
-        }
+            if (value > score)
+                score = (value >= beta) ? value : negaMin(children[i], depth - 1, value, beta, !player);
         
-        if (m >= beta) {
-            // Has the best value
-            negascout_table.insert(make_pair(state, stored_info_t(m,depth)));
-            return m;
+            if (score >= beta)
+                break;
         }
-
-        negascout_table.insert(make_pair(state, stored_info_t(score,depth,0)));
-    }
     
-    negascout_table.insert(make_pair(state, stored_info_t(m,depth,2)));
-    return m;
+    // Before returning, check if can add something to the table
+    if (score <= alpha) //fail-low, score <= alpha, gives us an upper bound
+        negascout_table.insert(make_pair(state, stored_info_t(score, depth, 2)));
+    
+    if (score > alpha && score < beta) //exact min max value
+        negascout_table.insert(make_pair(state, stored_info_t(score, depth, 1)));
+    
+    if (score >= beta) //fail-high, gives us a lower bound to the exact minmax value
+        negascout_table.insert(make_pair(state, stored_info_t(score, depth, 0)));
+    
+    return score;
 }
 
-
-
 int negaMin(state_t state, int depth, int alpha, int beta, bool player) {
+    
+    // Check table
     hash_table_t::iterator it = negascout_table.find(state);
-    int value, d, type;
-    
-    if (it != negascout_table.end()) {
-        value = (it->second).val; 
-        d = (it->second).depth;
-        type = (it->second).type;
-        if (d >= depth) {
-            if (type == 1)
-                return value;
-            else if (type == 0)
-                alpha = MAX(alpha,value);
-            else if(type == 2)
-                beta = MIN(beta,value);
-            if (alpha >= beta)
-                return alpha;	
-        }
+    if (it != negascout_table.end() && (it->second).depth >= depth) {
+        int value = (it->second).val;
+        int type = (it->second).type;
+        
+        if (type == 1)
+            return value;
+        else if (type == 0)
+            alpha = MAX(value,alpha);
+        else if (type == 2)
+            beta = MIN(beta,value);
+        if (alpha >= beta)
+            return value;
     }
     
-    if (state.terminal() || depth == 0) {
-        if (state.value() <= alpha)
-            type = 0;
-        else if (state.value() >= beta)
-            type = 2;
-        else
-            type = 1;
-        negascout_table.insert(make_pair(state, stored_info_t(state.value(),depth,type)));
+    // Execute algorithm
+    if (state.terminal() || depth == 0)
         return state.value();
-    }
 	
     std::vector<state_t> children = state.getChildren(player);
-    int m = MIN(INT_MAX, negaMax(children[0], depth - 1, alpha, beta, !player));
+    int score = MIN(INT_MAX, negaMax(children[0], depth - 1, alpha, beta, !player));
     
-    if (m <= alpha) {
-       negascout_table.insert(make_pair(state, stored_info_t(m,depth)));
-        return m;
-    }
-    
-    for (int i = 1; i != children.size(); ++i) {
-        int score = negaMax(children[i], depth - 1, m, m + 1, !player);
+    if (score > alpha)
+        for (int i = 1; i != children.size(); ++i) {
+            int value = negaMax(children[i], depth - 1, score, score + 1, !player);
         
-        if (score <= m) {
-            if (score <= alpha) {
-                m = score;
-                //	negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));
-            } else
-                negaMax(children[i], depth - 1, alpha, score, !player);
-            }
-            if (m <= alpha) {
-                negascout_table.insert(make_pair(state, stored_info_t(m,depth)));
-                return m;
-            }
-        negascout_table.insert(make_pair(state, stored_info_t(score,depth,0)));
+            if (value <= score)
+                score = (value <= alpha) ? value : negaMax(children[i], depth - 1, alpha, value, !player);
+        
+            if (score <= alpha)
+                break;
         }
     
-    negascout_table.insert(make_pair(state, stored_info_t(m,depth,0)));
-    return m;
+    // Before returning, check if can add something to the table
+    if (score <= alpha) //fail-low, score <= alpha, gives us an upper bound
+        negascout_table.insert(make_pair(state, stored_info_t(score, depth, 2)));
+    
+    if (score > alpha && score < beta) //exact min max value
+        negascout_table.insert(make_pair(state, stored_info_t(score, depth, 1)));
+    
+    if (score >= beta) //fail-high, gives us a lower bound to the exact minmax value
+        negascout_table.insert(make_pair(state, stored_info_t(score, depth, 0)));
+    
+    return score;
 }
 
 int negascout(state_t state, int depth, bool player) {
