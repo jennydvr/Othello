@@ -38,9 +38,7 @@ void test(int alg) {
             cout << alphabeta_table.size() << "  -  " << alphabeta_table.bucket_count() << "  -  ";
             printf("%.5lf\n", tEnd);
         }
-
-        // Calculate negascout
-        if (alg == 1)
+        else if (alg == 1) // Calculate negascout
         {        
             tStart = clock();
             ans = negascout(states.back(), depth, player);
@@ -50,9 +48,7 @@ void test(int alg) {
             cout << negascout_table.size() << "  -  " << negascout_table.bucket_count() << "  -  ";
             printf("%.5lf\n", tEnd);
         }
-        
-        // Calculate minimax
-        if (alg == 2)
+        else if (alg == 2) // Calculate minimax
         {
             tStart = clock();
             ans = minimax(states.back(), depth, player);
