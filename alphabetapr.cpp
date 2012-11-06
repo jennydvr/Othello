@@ -13,64 +13,57 @@ hash_table_t alphabeta_table;
 int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
     hash_table_t::iterator it = alphabeta_table.find(state);
     int value, type, d;
-    
-    if (it != alphabeta_table.end()) {
-        value = (it->second).val;
-        type = (it->second).type;
+   if (it != alphabeta_table.end()){
+	value = (it->second).val;
+	type = (it->second).type;
         d = (it->second).depth;
 
-        if (d >= depth) {
-            if (type == 1)
-                return value;
-            else if (type == 0)
-                alpha = MAX(value, alpha);
-            else if (type == 2)
-                beta = MIN(beta, value);		
-            if (alpha >= beta)
-                return alpha;     	
-        }
+	if (d >= depth){
+	  if (type == 1 )
+		return value;
+	else if (type == 0)
+	  alpha = MAX(value,alpha);
+	else if (type == 2)
+		beta = MIN(beta,value);		
+	if (alpha >= beta)
+		return value;     	
+	}
     }
 
     if (depth == 0 || state.terminal()) {
-        if (state.value() <= alpha)
-            type = 0;
-        else if (state.value() >= beta)
-            type = 2;
-        else 
-            type = 1;
-        
-        alphabeta_table.insert(make_pair(state, stored_info_t(state.value(), depth, type)));
-        return state.value();
-	}
+	return state.value();
+     }
 	
     std::vector<state_t> children = state.getChildren(player);
-    
-	if (player == MAXPLAYER) {
-        for (int i = 0; i != children.size(); ++i) {
-            alpha = MAX(alpha, alphabeta(children[i], depth-1, alpha, beta, !player));
-            
-            if (beta <= alpha) //  beta <= value, uppper bound
-                break;
-            // if here, then beta > alpha, so alpha lower bound
-            alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth,0)));
-        }
-        //here, alpha has the best value so it's an exact value
-        alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth)));
-        return alpha;
+    int score, a, b;
+    if (player == MAXPLAYER) {
+	 score = INT_MIN;
+	 a = alpha;	// storing the original
+          for (int i = 0; i != children.size() && score < beta; ++i) { //score inside limits
+            score = MAX(score, alphabeta(children[i], depth-1, a, beta, !player));
+            a = max(a,score);
+	  }
         
-	} else {
-        for (int i = 0; i != children.size(); ++i) {
-            beta = MIN(beta, alphabeta(children[i], depth-1, alpha, beta, !player));
-            
-            if (beta <= alpha)
-                break;
-            alphabeta_table.insert(make_pair(state, stored_info_t(alpha,depth,0)));
+     } 
+     else {
+	  score=INT_MAX;
+	  b = beta;
+          for (int i = 0; i != children.size() && score > alpha; ++i) { // score inside limits
+            score = MIN(score, alphabeta(children[i], depth-1, alpha, b, !player));
+            b = MIN(score,b);
         }
-        //here, beta has the best value so it's an exact value
-        alphabeta_table.insert(make_pair(state, stored_info_t(beta,depth)));
-        return beta;
+
 	}
-   
+     if (score <= alpha)
+	 //fail-low, score <= alpha, gives us an upper bound
+        alphabeta_table.insert(make_pair(state, stored_info_t(score,depth,2)));
+     if (score > alpha && score < beta)
+	//exact min max value
+	 alphabeta_table.insert(make_pair(state, stored_info_t(score,depth,1)));
+     if (score >=beta)
+	//fail-high, gives us a lower bound to the exact minmax value
+	alphabeta_table.insert(make_pair(state, stored_info_t(score,depth,0)));
+	return score;
 }
 
 int alphabeta(state_t state, int depth, bool player) {
