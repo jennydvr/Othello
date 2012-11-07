@@ -9,7 +9,7 @@
 #include "algorithms.h"
 
 hash_table_t alphabeta_table;
-int alphabeta_expanded;
+unsigned long int alphabeta_expanded;
 
 int alphabeta(state_t state, int depth, int alpha, int beta, bool player) {
     ++alphabeta_expanded;

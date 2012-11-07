@@ -11,6 +11,7 @@
 
 #define MAXPLAYER true
 
+#include <algorithm>
 #include <climits>
 #include "othello_cut.h"
 #include <tr1/unordered_map>
@@ -41,9 +42,12 @@ extern hash_table_t negascout_table;
 extern hash_table_t minimax_table;
 
 // Expanded nodes
-extern int alphabeta_expanded;
-extern int negascout_expanded;
-extern int minimax_expanded;
+extern unsigned long int alphabeta_expanded;
+extern unsigned long int negascout_expanded;
+extern unsigned long int minimax_expanded;
+
+// Nodes in the principal variation
+extern vector<state_t> states;
 
 // Minimax (Negamax) algorithm
 int minimax(state_t state, int depth, bool player);

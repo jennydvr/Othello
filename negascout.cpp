@@ -9,9 +9,30 @@
 #include "algorithms.h"
 
 hash_table_t negascout_table;
-int negascout_expanded;
+unsigned long int negascout_expanded;
 
 int negaMin(state_t state, int depth, int alpha, int beta, bool player);
+
+bool inPrincipalVariation(state_t state) {
+    return find(states.begin(), states.end(), state) != states.end();
+}
+
+std::vector<state_t> getOrderedChildren(state_t state, bool player) {
+    std::vector<state_t> children = state.getChildren(player);
+    
+    // If there is a node of the principal variation in position 0, return
+    if (find(states.begin(), states.end(), children[0]) != states.end())
+        return children;
+    
+    // Else, search in the other nodes and make a swap to position 0
+    for (int i = 1; i != children.size(); ++i)
+        if (find(states.begin(), states.end(), children[i]) != states.end()) {
+            swap(states[0], states[i]);
+            break;
+        }
+    
+    return children;
+}
 
 int negaMax(state_t state, int depth, int alpha, int beta, bool player) {
     ++negascout_expanded;
@@ -36,7 +57,7 @@ int negaMax(state_t state, int depth, int alpha, int beta, bool player) {
     if (state.terminal() || depth == 0)
         return state.value();
     
-    std::vector<state_t> children = state.getChildren(player);
+    std::vector<state_t> children = getOrderedChildren(state, player);
     int score = MAX(INT_MIN, negaMin(children[0], depth - 1, alpha, beta, !player));
     
     if (score < beta)

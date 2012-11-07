@@ -9,7 +9,7 @@
 #include "algorithms.h"
 
 hash_table_t minimax_table;
-int minimax_expanded;
+unsigned long int minimax_expanded;
 
 int minValue(state_t state, int depth, bool player);
 
